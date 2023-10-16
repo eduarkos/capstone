@@ -3,59 +3,41 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import cv2
 import imutils
-import torch
 
-
-det = False
-# Funcion Vizualializar
-
+cap = None
 
 def visualizar():
-    global pantalla, frame, contafot
-    # leemos la videocaptura
+    global cap, lblVideo
     if cap is not None:
         ret, frame = cap.read()
-        #Color RGB
-        frame = cv2.cvtColor.resize(frame, width=640)
-
-        #convertir el video
-        im = Image.fromarray(frame)
-        img = ImageTk.PhothoImage(image=im)
-    
-        #Mostrar en el GUI
-        lblVideo.configure(image=img)
-        lblVideo.image = img
-        lblVideo.after(10, visualizar)
-    else:
-        cap.release()
-
-
+        if ret:
+            frame = imutils.resize(frame, width=640)
+            photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
+            lblVideo.config(image=photo)
+            lblVideo.image = photo
+            lblVideo.after(10, visualizar)
 
 def iniciar():
     global cap
-    # Elegimos la cámara (0 para la cámara predeterminada, 1 para la segunda cámara, etc.)
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(0)
     print("Inicio de cámara")
-
+    visualizar()  # Llama a la función visualizar después de iniciar la cámara
 
 def finalizar():
-    global pantalla, cap
-    cap.release()  # Corregir el método de liberación de recursos
+    global cap, pantalla
+    if cap is not None:
+        cap.release()
     cv2.destroyAllWindows()
-    pantalla.destroy()
+    pantalla.destroy()  # Cierra la ventana principal
     print("Fin")
-
 
 def leerf():
     global modelo, model, det
-    # Extraer el modelo
     modelo = filedialog.askopenfilename(filetypes=[("all modal format", ".pt")])
     if modelo:
-        # mostramos la direccion del archivo
         texto4.configure(text=modelo)
     else:
         texto4.configure(text=modelo)
-
 
 # Ventana principal
 # Pantalla
@@ -113,3 +95,4 @@ lblVideo.place(x=320, y=50)
 
 
 pantalla.mainloop()
+
