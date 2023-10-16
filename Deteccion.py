@@ -1,10 +1,10 @@
 import cv2
 import mediapipe as mp
 import os
-import numpy as np
+
 #----------------------------- Creamos la carpeta donde almacenaremos el entrenamiento ---------------------------------
-nombre = 'u'
-direccion = r'C:\Users\56998\Desktop\fotos_vocales\todo'
+nombre = 'Mano_Izquierda'
+direccion = r'C:\Users\56998\Desktop\fotos_vocales\prueba'
 carpeta = direccion + '/' + nombre
 if not os.path.exists(carpeta):
     print('Carpeta creada: ',carpeta)
@@ -26,7 +26,7 @@ manos = clase_manos.Hands() #Primer parametro, FALSE para que no haga la detecci
 
 #----------------------------------Metodo para dibujar las manos---------------------------
 dibujo = mp.solutions.drawing_utils #Con este metodo dibujamos 21 puntos criticos de la mano
-dedos_reg = np.zeros((200, 200, 3), dtype=np.uint8)
+
 
 while (1):
     ret,frame = cap.read()
@@ -50,15 +50,14 @@ while (1):
                 pto_i3 = posiciones[12]#5 Dedos: 12| 0 Dedos: 10 | 1 Dedo: 20|2 Dedos: 16| 3 Dedos: 12| 4 Dedos: 12
                 pto_i4 = posiciones[0] #5 Dedos: 0 | 0 Dedos: 0 | 1 Dedo: 0 | 2 Dedos: 0 | 3 Dedos: 0 | 4 Dedos: 0
                 pto_i5 = posiciones[9] #Punto central
-                x1,y1 = (pto_i5[1]-100),(pto_i5[2]-100) #Obtenemos el punto incial y las longitudes
-                ancho, alto = (x1+80),(y1+160)
+                x1,y1 = (pto_i5[1]-80),(pto_i5[2]-80) #Obtenemos el punto incial y las longitudes
+                ancho, alto = (x1+80),(y1+80)
                 x2,y2 = x1 + ancho, y1 + alto
                 dedos_reg = copia[y1:y2, x1:x2]
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 3)
-            if not dedos_reg is None:
-                dedos_reg = cv2.resize(dedos_reg,(200,200), interpolation = cv2.INTER_CUBIC) #Redimensionamos las fotos
-                cv2.imwrite(carpeta + "/U_{}.jpg".format(cont),dedos_reg)
-                cont = cont + 1
+            #dedos_reg = cv2.resize(dedos_reg,(200,200), interpolation = cv2.INTER_CUBIC) #Redimensionamos las fotos
+            #cv2.imwrite(carpeta + "/Mano_{}.jpg".format(cont),dedos_reg)
+            #cont = cont + 1
 
 
 
@@ -66,7 +65,7 @@ while (1):
 
     cv2.imshow("Video",frame)
     k = cv2.waitKey(1)
-    if k == 27 or cont >= 1300:
+    if k == 27 or cont >= 300:
         break
 cap.release()
 cv2.destroyAllWindows()
